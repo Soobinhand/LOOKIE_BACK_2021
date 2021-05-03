@@ -30,7 +30,7 @@ public class PostController {
     @PostMapping
     public String postPost(PostVO postVO) {
         postService.save(postVO);
-        return "board";
+        return "redirect:/board";
     }
 
     @PutMapping
