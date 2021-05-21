@@ -407,10 +407,8 @@
                                     <tr>
                                         <td>${post.id}</td>
                                         <td><a href="/post/${post.id}">${post.title}</a></td>
-                                        <td>${post.name}</td>
-                                        <td>
-                                            <fmt:formatDate value="${post.created_date}" pattern="yyyy-MM-dd"/>
-                                        </td>
+                                        <td>${post.user.name}</td>
+                                        <td><fmt:formatDate value="${post.created_date}" pattern="yyyy-MM-dd"/></td>
                                     </tr>
                                 </c:forEach>
                                 </tbody>
@@ -447,8 +445,7 @@
 </a>
 
 <!-- Logout Modal-->
-<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -457,10 +454,16 @@
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
-            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+            <div class="modal-body">
+                Select "Logout" below if you are ready to end your current session.
+            </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-primary" href="login.jsp">Logout</a>
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">
+                    Cancel
+                </button>
+                <a class="btn btn-primary" id="logout">
+                    Logout
+                </a>
             </div>
         </div>
     </div>
@@ -468,6 +471,17 @@
 
 <!-- Bootstrap core JavaScript-->
 <script src="/vendor/jquery/jquery.min.js"></script>
+<script>
+    $("#logout").click(function (){
+        $.ajax({
+            type:'POST',
+            url:'/logout',
+            success: function () {
+                location.href='/'
+            }
+        })
+    })
+</script>
 <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 <!-- Core plugin JavaScript-->

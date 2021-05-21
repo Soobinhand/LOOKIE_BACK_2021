@@ -1,7 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<?xml version="1.0" encoding="UTF-8"?>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html lang="ko">
+<html lang="kr">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -36,40 +35,43 @@
                         <div class="text-center">
                             <h1 class="h4 text-gray-900 mb-4">Create Post!</h1>
                         </div>
-
                         <c:choose>
                             <c:when test="${post!=null}">
-                                <form action="/post" method="post" class="user">
+                                <form id="modifyForm" action="/post" method="PUT" class="user">
                                     <input type="number" name="id" value="${post.id}" hidden>
-
-
                                     <div class="form-group">
-                                        <input type="text" class="form-control form-control-user" name="title" placeholder="Title" readonly value="${post.title}">
+                                        <input type="text" class="form-control form-control-user" name="title" placeholder="Title" value="${post.title}" readonly>
                                     </div>
                                     <div class="form-group">
                                         <textarea class="form-control form-control-user" name="content" readonly>${post.content}</textarea>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" class="form-control form-control-user" name="name" placeholder="name" readonly value="${post.name}">
+                                        <input type="text" class="form-control form-control-user" name="name" placeholder="name" value="${post.user.name}" readonly>
                                     </div>
-                                    <c:choose>
-                                        <c:when test="${!isModify}">
-                                            <a id="modify" href="/post/${post.id}?isModify=true" class="btn btn-primary btn-user btn-block">
-                                                Modify
+                                    <c:if test="${post.fileList.size() != 0}">
+                                        <c:forEach var="file" items="${post.fileList}">
+                                            <a href="/${post.id}/file/${file.id}" class="btn btn-primary btn-user btn-block">
+                                                    ${file.name}
                                             </a>
-                                            <a id="delete" class="btn btn-danger btn-user btn-block">
-                                                Delete
-                                            </a>
-
-                                        </c:when>
-                                        <c:otherwise>
-                                            <a id="modifySubmit" class="btn btn-primary btn-user btn-block">
-                                                Submit
-                                            </a>
-
-
-                                        </c:otherwise>
-                                    </c:choose>
+                                        </c:forEach>
+                                    </c:if>
+                                    <c:if test="${userSession == post.user.email}">
+                                        <c:choose>
+                                            <c:when test="${!isModify}">
+                                                <a id="modify" href="/post/${post.id}?isModify=true" class="btn btn-primary btn-user btn-block">
+                                                    Modify
+                                                </a>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <a id="modifySubmit" class="btn btn-primary btn-user btn-block">
+                                                    Submit
+                                                </a>
+                                            </c:otherwise>
+                                        </c:choose>
+                                        <a id="delete" class="btn btn-danger btn-user btn-block">
+                                            Delete
+                                        </a>
+                                    </c:if>
                                 </form>
                             </c:when>
                             <c:otherwise>
@@ -81,11 +83,11 @@
                                         <textarea class="form-control form-control-user" name="content"></textarea>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" class="form-control form-control-user" name="name" placeholder="name">
+                                        <input type="file" id="files" multiple="multiple">
                                     </div>
-                                    <button type="submit" class="btn btn-primary btn-user btn-block">
+                                    <a id="register" class="btn btn-primary btn-user btn-block">
                                         Register Post
-                                    </button>
+                                    </a>
                                 </form>
                             </c:otherwise>
                         </c:choose>
@@ -97,56 +99,7 @@
     </div>
 </div>
 <!-- Bootstrap core JavaScript-->
-
-<script src="/vendor/jquery/jquery.min.js">
-
-
-</script>
-<c:if test="${isModify}">
-<script>
-    $("input").removeAttr("readonly")
-    $("textarea").removeAttr("readonly")
-    $("#modifySubmit").click(function (){
-    var postVO =new  Object()
-    postVO.id = $("[name='id']").val()
-    postVO.title = $("[name='title']").val()
-    postVO.content= $("[name='content']").val()
-    postVO.name = $("[name='name']").val()
-
-    $.ajax({
-    type:"PUT",
-    url:"/post",
-    contentType:"application/json; charset=utf-8",
-    data:JSON.stringify(postVO),
-    success:function (data) {
-    if(data)
-    location.href="/post/"+postVO.id
-    }
-    })
-    })
-
-
-</script>
-</c:if>
-
-<script>
-$("#delete").click(function(){
-var chk = confirm("정말로 삭제하시겠습니까?")
-if(chk) {
-$.ajax({
-type: "DELETE",
-url: "/post/" + $("[name='id']").val(),
-success: function (data) {
-if (data)
-location.href = "/board"
-}
-})
-}
-})
-</script>
-
-
-
+<script src="/vendor/jquery/jquery.min.js"></script>
 <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 <!-- Core plugin JavaScript-->
@@ -155,6 +108,87 @@ location.href = "/board"
 <!-- Custom scripts for all pages-->
 <script src="/js/sb-admin-2.min.js"></script>
 
+<!-- 글 수정 스크립트-->
+<c:if test="${isModify}">
+    <script>
+        $("[name='title']").removeAttr("readonly")
+        $("textarea").removeAttr("readonly")
+        $("#modifySubmit").click(function (){
+            const postVO =new  Object()
+            postVO.id = $("[name='id']").val()
+            postVO.title = $("[name='title']").val()
+            postVO.content= $("[name='content']").val()
+            $.ajax({
+                type:"PUT",
+                url:"/post",
+                contentType:"application/json; charset=utf-8",
+                data:JSON.stringify(postVO),
+                success:function (data) {
+                    if(data)
+                        location.href="/post/"+postVO.id
+                }
+            })
+        })
+    </script>
+</c:if>
+
+<!-- 글 삭제 스크립트-->
+<script>
+    $("#delete").click(function(){
+        const chk = confirm("정말로 삭제하시겠습니까?")
+        if(chk) {
+            $.ajax({
+                type: "DELETE",
+                url: "/post/" + $("[name='id']").val(),
+                success: function (data){
+                    if (data)
+                        location.href = "/board"
+                }
+            })
+        }
+    })
+</script>
+
+<!-- 글 등록 스크립트 -->
+<script>
+    $("#register").click(function (){
+        var postVO = new Object()
+        var formData = new FormData()
+        var files = $('#files')[0].files
+        var postId
+        postVO.title = $("[name='title']").val()
+        postVO.content = $("[name='content']").val()
+        $.ajax({
+            method:"POST",
+            url:"/post",
+            data: JSON.stringify(postVO),
+            contentType: "application/json; charset=UTF-8",
+            success: function (data){
+                postId = data
+                alert("파일")
+                if(files.length != 0){
+                    for(var i=0; i<files.length; i++)
+                        formData.append('files',files[i])
+                    $.ajax({
+                        method:"POST",
+                        enctype: 'multipart/form-data',
+                        url:"/"+postId+"/file",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success:function(){
+                            alert("성공")
+                            location.href='/board'
+                        },
+                        error: function (e){console.log(e)}
+                    })
+                }
+                else
+                    location.href='/board'
+            }
+        })
+    })
+</script>
 </body>
 
 </html>

@@ -1,26 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>ac.kr.smu</groupId>
-    <artifactId>SpringTest</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <packaging>war</packaging>
-    <name>SpringTest</name>
+    <modelVersion>4.0.0</modelVersion> <!-- maven 의 pom.xml 의 모델 버전임-->
+    <groupId>ac.kr.smu</groupId> <!-- 프로젝트를 생성한 조직 또는 그룹명 -->
+    <artifactId>SpringTest</artifactId> <!-- 프로젝트에서 생성되는 기본 아티팩트의 고유이름 -->
+    <version>1.0-SNAPSHOT</version><!-- 애플리케이션의 버전. 접미사로 SNAPSHOT 이 붙으면 아직 개발 단계라는 의미-->
+    <packaging>war</packaging><!--jar, war, ear, pom 등 패키지 유형을 나타냄-->
+    <name>SpringTest</name><!--프로젝트 명-->
 
-    <properties>
-        <java-version>1.8</java-version>
-        <org.springframework-version>5.3.2</org.springframework-version>
+
+
+
+    <properties><!--pom 에서 중복해서 사용되는 설정 값들을 지정해놓는 부분-->
+        <java-version>1.8</java-version> <!-- 자바 버전-->
+        <org.springframework-version>5.2.13.RELEASE</org.springframework-version>
+        <!-- 스프링 프레임 워크 버전-->
+
+        <org.springframework.security-version>5.4.5</org.springframework.security-version>
+        <!--스프링 보안버전-->
+
+        <org.aspectj-version>1.9.4</org.aspectj-version>
         <org.slf4j-version>1.7.29</org.slf4j-version>
+        <!--로깅이란 프로그램 개발 중이나 완료 후 발생할 수 있는 오류에 대해 디버깅하거나 운영 중인
+        프로그램 상태를 모니터링 하기 위해 필요한 정보를 기록하는 것임-->
+        <!--slf4j == simple logging facade for java 의 준말임-->
+        <tomcat.version>8.5.641</tomcat.version>
+
     </properties>
+    <!--pom 이 무엇일까
+    우리는 pom.xml 을 통해 dependency 를 추가를 해서 라이브러리를 설치.-->
+    <!--모두 같은 환경에서 개발을 해야하는데 카톡이나 메일로 라이브러리를 보내주면서 계속 import
+    시켜주는 비효율적인 행위보다는 pom.xml 만 공유하는게 효율적임. 만약 dependency 에 작성한
+    라이브러리를 사용하기 위해 다른 라이브러리도 필요하다면 알아서 같이 설치해줌.
+    프로젝트 내 빌드 옵션을 설정하는 부분임.-->
+
+
+
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.18</version>
             <scope>provided</scope>
+            <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok
+       기존의 문제 : 멤버변수를 제어하기 위해 모델 객체마다 반복적으로 메소드들을 생성해야 함.
+
+       롬복의 특징 : 생성자, 접근자, 설정자, toString() 자동 생성 라이브러리이므로
+       위와 같은 번거로움이 없음.
+       -->
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>5.4.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>5.4.5</version>
         </dependency>
 
         <!-- Spring -->
@@ -37,11 +77,19 @@
             </exclusions>
         </dependency>
 
+
+
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${org.springframework-version}</version>
         </dependency>
+
+
+
+
+
         <!-- https://mvnrepository.com/artifact/org.springframework/spring-test -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -173,6 +221,40 @@
             <version>2.12.2</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${org.springframework.security-version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+            <version>${org.springframework.security-version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${org.springframework.security-version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-config -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>5.4.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+
+
+
     </dependencies>
 
     <build>
@@ -197,7 +279,6 @@
                     <mainClass>org.test.int1.Main</mainClass>
                 </configuration>
             </plugin>
-            <!--Java 설정을 하기 때문에 web.xml이 없어도 오류가 나오지 않게 설정-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
