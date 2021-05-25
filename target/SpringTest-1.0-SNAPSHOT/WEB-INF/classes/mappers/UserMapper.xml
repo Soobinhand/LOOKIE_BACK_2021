@@ -4,7 +4,6 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="ac.kr.smu.mapper.UserMapper">
-
     <insert id="save">
         INSERT INTO user(name,email,password)
         VALUES (#{name},#{email},#{password})
@@ -13,8 +12,12 @@
     <select id="checkEmailDuplication" resultType="int">
         SELECT COUNT(*) FROM user where email=#{email}
     </select>
+
     <select id="findByEmail" resultType="UserVO">
         SELECT * FROM user where email=#{email}
     </select>
 
+    <select id="findById" resultType="UserVO">
+        SELECT * FROM user where id=#{id}
+    </select>
 </mapper>

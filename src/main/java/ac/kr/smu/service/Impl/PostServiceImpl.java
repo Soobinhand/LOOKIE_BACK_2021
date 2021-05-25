@@ -20,7 +20,6 @@ class PostServiceImpl implements PostService {
     public void save(PostVO postVO) {
         postMapper.save(postVO);
     }
-    @Secured("ROLE_ADMIN")
     @PreAuthorize("hasRole('ADMIN')")
     @Override
     public List<PostVO> findAll() {
